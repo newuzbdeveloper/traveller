@@ -1,8 +1,5 @@
-export default function SignUp() {
-  return (
-    <div>sign-up</div>
-  )
+function SignUpPage() {
+  return <div>Sign-Up</div>;
 }
 
-
-
+export default SignUpPage;
