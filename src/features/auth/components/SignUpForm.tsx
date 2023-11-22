@@ -7,13 +7,17 @@ import AppButton from '@features/ui/AppButton';
 interface FormInput {
   email: string;
   password: string;
+  name: string;
+  passwordRepeat: string;
 }
 
-function LoginForm() {
+function SignUpForm() {
   const { control, handleSubmit } = useForm({
     defaultValues: {
       email: '',
       password: '',
+      name: '',
+      passwordRepeat: '',
     },
   });
 
@@ -29,6 +33,27 @@ function LoginForm() {
         onSubmit={handleSubmit(onSubmit)}
         sx={{ width: '100%' }}
       >
+        <Controller
+          name="name"
+          control={control}
+          rules={{ required: 'Please specify your name.' }}
+          render={({ field, fieldState }) => (
+            <TextField
+              variant="standard"
+              margin="normal"
+              required
+              fullWidth
+              id="name"
+              label="Name"
+              autoComplete="name"
+              autoFocus
+              helperText={fieldState.error?.message}
+              error={Boolean(fieldState.error)}
+              sx={{ mb: 3, mt: 0 }}
+              {...field}
+            />
+          )}
+        />
         <Controller
           name="email"
           control={control}
@@ -73,15 +98,37 @@ function LoginForm() {
           )}
         />
 
+        <Controller
+          name="passwordRepeat"
+          control={control}
+          rules={{ required: 'Please confirm your password.' }}
+          render={({ field, fieldState }) => (
+            <TextField
+              variant="standard"
+              margin="normal"
+              required
+              fullWidth
+              id="passwordRepeat"
+              label="Password Confirm"
+              autoComplete="passwordRepeat"
+              autoFocus
+              helperText={fieldState.error?.message}
+              error={Boolean(fieldState.error)}
+              sx={{ mb: { xs: 3, md: 5 }, mt: 0 }}
+              {...field}
+            />
+          )}
+        />
+
         <AppButton type="submit" fullWidth variant="contained" sx={{ mb: 2 }}>
-          Login.
+          Sign up.
         </AppButton>
         <Box display="flex" justifyContent="center">
           <Typography color="text.secondary" mr={1}>
-            Don't you have an account yet?
+            Do you have an account already?
           </Typography>
-          <Link href="/sign-up" variant="body2">
-            Sign Up.
+          <Link href="/login" variant="body2">
+            Login.
           </Link>
         </Box>
       </Box>
@@ -89,4 +136,4 @@ function LoginForm() {
   );
 }
 
-export default LoginForm;
+export default SignUpForm;
