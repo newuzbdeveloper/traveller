@@ -1,9 +1,25 @@
-import { createTheme } from '@mui/material';
+/* eslint-disable react-refresh/only-export-components */
+import { forwardRef } from 'react';
+import {
+  Link as RouterLink,
+  LinkProps as RouterLinkProps,
+} from 'react-router-dom';
+
+import { type LinkProps, createTheme } from '@mui/material';
 
 import { FontFamilies } from './FontFamilies';
 import { FontWeights } from './FontWeights';
 
-const theme = createTheme({
+const LinkBehavior = forwardRef<
+  HTMLAnchorElement,
+  Omit<RouterLinkProps, 'to'> & { href: RouterLinkProps['to'] }
+>((props, ref) => {
+  const { href, ...other } = props;
+  // Map href (Material UI) -> to (react-router)
+  return <RouterLink ref={ref} to={href} {...other} />;
+});
+
+export const theme = createTheme({
   palette: {
     primary: {
       main: '#729E65',
@@ -11,6 +27,27 @@ const theme = createTheme({
     text: {
       primary: '#223644',
       secondary: '#64727C',
+    },
+  },
+  components: {
+    MuiInputLabel: {
+      styleOverrides: {
+        root: {
+          fontSize: '0.875rem',
+          lineHeight: '1.313rem',
+          fontFamily: 'roboto',
+        },
+      },
+    },
+    MuiLink: {
+      defaultProps: {
+        component: LinkBehavior,
+      } as LinkProps,
+    },
+    MuiButtonBase: {
+      defaultProps: {
+        LinkComponent: LinkBehavior,
+      },
     },
   },
 });
@@ -108,5 +145,3 @@ theme.typography.caption = {
   fontFamily: FontFamilies.poppins,
   fontWeight: FontWeights.regular,
 };
-
-export default theme;
