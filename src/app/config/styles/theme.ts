@@ -1,23 +1,12 @@
-/* eslint-disable react-refresh/only-export-components */
-import { forwardRef } from 'react';
-import {
-  Link as RouterLink,
-  LinkProps as RouterLinkProps,
-} from 'react-router-dom';
+
 
 import { type LinkProps, createTheme } from '@mui/material';
 
 import { FontFamilies } from './FontFamilies';
 import { FontWeights } from './FontWeights';
+import LinkBehavior from './LinkBehavior';
 
-const LinkBehavior = forwardRef<
-  HTMLAnchorElement,
-  Omit<RouterLinkProps, 'to'> & { href: RouterLinkProps['to'] }
->((props, ref) => {
-  const { href, ...other } = props;
-  // Map href (Material UI) -> to (react-router)
-  return <RouterLink ref={ref} to={href} {...other} />;
-});
+
 
 export const theme = createTheme({
   palette: {
@@ -30,6 +19,16 @@ export const theme = createTheme({
     },
   },
   components: {
+    MuiInputBase: {
+      defaultProps: {
+        style: {
+          fontFamily: FontFamilies.poppins,
+          fontWeight: FontWeights.regular,
+          fontSize: '1rem',
+          lineHeight: '1.5rem',
+        },
+      },
+    },
     MuiInputLabel: {
       styleOverrides: {
         root: {
@@ -145,3 +144,5 @@ theme.typography.caption = {
   fontFamily: FontFamilies.poppins,
   fontWeight: FontWeights.regular,
 };
+
+export default theme;
