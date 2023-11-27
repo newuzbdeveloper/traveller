@@ -2,6 +2,7 @@ import { Controller, type SubmitHandler, useForm } from 'react-hook-form';
 
 import { Box, Link, TextField, Typography } from '@mui/material';
 
+import { AppRoutes } from '@config/styles/routes/AppRoutes';
 import AppButton from '@features/ui/AppButton';
 
 interface FormInput {
@@ -80,7 +81,7 @@ function LoginForm() {
           <Typography color="text.secondary" mr={1}>
             Don't you have an account yet?
           </Typography>
-          <Link href="/sign-up" variant="body2">
+          <Link href={AppRoutes.signUp} variant="body2">
             Sign Up.
           </Link>
         </Box>

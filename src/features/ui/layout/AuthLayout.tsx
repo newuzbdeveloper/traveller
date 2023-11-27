@@ -1,8 +1,9 @@
 import { Outlet, useLocation } from 'react-router-dom';
 
+import { Box, Grid } from '@mui/material';
+
 import LoginFormBackground from '@features/auth/assets/login.png';
 import SignUpFormBackground from '@features/auth/assets/signup.png';
-import { Box, Grid } from '@mui/material';
 
 import Logo from '../logo/logo';
 
@@ -40,7 +41,7 @@ export default function AuthLayout() {
       >
         <Box
           sx={{
-            mx: 4,
+            mx: { xs: 2, md: 4 },
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
