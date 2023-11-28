@@ -19,7 +19,7 @@ const LinkBehavior = forwardRef<
   return <RouterLink ref={ref} to={href} {...other} />;
 });
 
-export const theme = createTheme({
+const theme = createTheme({
   palette: {
     primary: {
       main: '#729E65',
@@ -145,3 +145,5 @@ theme.typography.caption = {
   fontFamily: FontFamilies.poppins,
   fontWeight: FontWeights.regular,
 };
+
+export default theme;

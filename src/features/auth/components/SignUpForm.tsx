@@ -3,6 +3,9 @@ import { Controller, type SubmitHandler, useForm } from 'react-hook-form';
 import { Box, Link, TextField, Typography } from '@mui/material';
 
 import AppButton from '@features/ui/AppButton';
+import { useAppDispatch } from '@store/index';
+
+import { registerUser } from '../store/AuthThunk';
 
 interface FormInput {
   email: string;
@@ -12,6 +15,7 @@ interface FormInput {
 }
 
 function SignUpForm() {
+  const dispatch = useAppDispatch();
   const { control, handleSubmit } = useForm({
     defaultValues: {
       email: '',
@@ -22,7 +26,13 @@ function SignUpForm() {
   });
 
   const onSubmit: SubmitHandler<FormInput> = (data) => {
-    console.log(data);
+    dispatch(
+      registerUser({
+        name: data.name,
+        email: data.email,
+        password: data.password,
+      }),
+    );
   };
 
   return (
@@ -106,6 +116,7 @@ function SignUpForm() {
             <TextField
               variant="standard"
               margin="normal"
+              type="password"
               required
               fullWidth
               id="passwordRepeat"
