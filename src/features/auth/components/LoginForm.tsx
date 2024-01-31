@@ -1,9 +1,14 @@
 import { Controller, type SubmitHandler, useForm } from 'react-hook-form';
+import { Navigate } from 'react-router-dom';
 
 import { Box, Link, TextField, Typography } from '@mui/material';
 
 import { AppRoutes } from '@config/styles/routes/AppRoutes';
 import AppButton from '@features/ui/AppButton';
+import { useAppDispatch, useAppSelector } from '@store/index';
+
+import { loginUser } from '../store/authActions';
+import { selectUser } from '../store/authSlice';
 
 interface FormInput {
   email: string;
@@ -11,17 +16,11 @@ interface FormInput {
 }
 
 function LoginForm() {
-  const { control, handleSubmit } = useForm({
-    defaultValues: {
-      email: '',
-      password: '',
-    },
-  });
-
-  const onSubmit: SubmitHandler<FormInput> = (data) => {
-    console.log(data);
-  };
-
+  const { control, handleSubmit, onSubmit } = useLoginForm();
+  const user = useAppSelector(selectUser);
+  if (user) {
+    return <Navigate to={AppRoutes.dashboard} replace />;
+  }
   return (
     <>
       <Box
@@ -91,3 +90,28 @@ function LoginForm() {
 }
 
 export default LoginForm;
+
+function useLoginForm() {
+  const dispatch = useAppDispatch();
+  const { control, handleSubmit } = useForm({
+    defaultValues: {
+      email: '',
+      password: '',
+    },
+  });
+
+  const onSubmit: SubmitHandler<FormInput> = (data) => {
+    dispatch(
+      loginUser({
+        email: data.email,
+        password: data.password,
+      }),
+    );
+  };
+
+  return {
+    control,
+    handleSubmit,
+    onSubmit,
+  };
+}
