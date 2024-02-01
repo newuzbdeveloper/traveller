@@ -1,9 +1,15 @@
 import { Controller, type SubmitHandler, useForm } from 'react-hook-form';
+import { Navigate } from 'react-router-dom';
 
 import { Box, Link, TextField, Typography } from '@mui/material';
 
 import { AppRoutes } from '@config/styles/routes/AppRoutes';
 import AppButton from '@features/ui/AppButton';
+import { auth } from '@services/firebase';
+import { useAppDispatch, useAppSelector } from '@store/index';
+
+import { registerUser } from '../store/authActions';
+import { selectUser, setUserName } from '../store/authSlice';
 
 interface FormInput {
   email: string;
@@ -13,19 +19,11 @@ interface FormInput {
 }
 
 function SignUpForm() {
-  const { control, handleSubmit } = useForm({
-    defaultValues: {
-      email: '',
-      password: '',
-      name: '',
-      passwordRepeat: '',
-    },
-  });
-
-  const onSubmit: SubmitHandler<FormInput> = (data) => {
-    console.log(data);
-  };
-
+  const { control, handleSubmit, password, onSubmit } = useSignUpForm();
+  const user = useAppSelector(selectUser);
+  if (user) {
+    return <Navigate to={AppRoutes.dashboard} replace />;
+  }
   return (
     <>
       <Box
@@ -102,7 +100,13 @@ function SignUpForm() {
         <Controller
           name="passwordRepeat"
           control={control}
-          rules={{ required: 'Please confirm your password.' }}
+          rules={{
+            required: 'Please confirm your password.',
+            validate: (confirmpassword) =>
+              confirmpassword != password
+                ? 'Passwords does not match!'
+                : undefined,
+          }}
           render={({ field, fieldState }) => (
             <TextField
               variant="standard"
@@ -110,8 +114,9 @@ function SignUpForm() {
               required
               fullWidth
               id="passwordRepeat"
-              label="Password Confirm"
+              label="Password Repeat"
               autoComplete="passwordRepeat"
+              type="password"
               autoFocus
               helperText={fieldState.error?.message}
               error={Boolean(fieldState.error)}
@@ -138,3 +143,36 @@ function SignUpForm() {
 }
 
 export default SignUpForm;
+
+function useSignUpForm() {
+  const dispatch = useAppDispatch();
+  const { control, handleSubmit, watch } = useForm({
+    defaultValues: {
+      email: '',
+      password: '',
+      name: '',
+      passwordRepeat: '',
+    },
+  });
+
+  const password = watch('password');
+
+  const onSubmit: SubmitHandler<FormInput> = async (data) => {
+    await dispatch(
+      registerUser({
+        name: data.name,
+        email: data.email,
+        password: data.password,
+        passwordRepeat: data.passwordRepeat,
+      }),
+    ).unwrap();
+    dispatch(setUserName(auth.currentUser?.displayName));
+  };
+
+  return {
+    control,
+    handleSubmit,
+    password,
+    onSubmit,
+  };
+}

@@ -7,6 +7,7 @@ import NotFoundPage from '@pages/not-found';
 import SignUpPage from '@pages/sign-up';
 
 import { AppRoutes } from './AppRoutes';
+import Dashboard from '@pages/home';
 
 function AppRouter() {
   return (
@@ -16,6 +17,7 @@ function AppRouter() {
         <Route path={AppRoutes.signUp} element={<SignUpPage />} />
         <Route path={AppRoutes.login} element={<LoginPage />} />
       </Route>
+      <Route path={AppRoutes.dashboard} element={<Dashboard />} />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
