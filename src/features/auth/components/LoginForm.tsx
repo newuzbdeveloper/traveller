@@ -1,14 +1,14 @@
 import { Controller, type SubmitHandler, useForm } from 'react-hook-form';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 
 import { Box, Link, TextField, Typography } from '@mui/material';
 
-import { AppRoutes } from '@config/styles/routes/AppRoutes';
+import { AppRoutes } from '@config/routes/AppRoutes';
 import AppButton from '@features/ui/AppButton';
 import { useAppDispatch, useAppSelector } from '@store/index';
 
 import { loginUser } from '../store/authActions';
-import { selectUser } from '../store/authSlice';
+import { selectAuth } from '../store/authSlice';
 
 interface FormInput {
   email: string;
@@ -17,9 +17,11 @@ interface FormInput {
 
 function LoginForm() {
   const { control, handleSubmit, onSubmit } = useLoginForm();
-  const user = useAppSelector(selectUser);
-  if (user) {
-    return <Navigate to={AppRoutes.dashboard} replace />;
+  const auth = useAppSelector(selectAuth);
+  const location = useLocation();
+  if (auth.user) {
+    const from = location.state?.from?.pathname || AppRoutes.dashboard;
+    return <Navigate to={from} replace />;
   }
   return (
     <>
@@ -73,7 +75,13 @@ function LoginForm() {
           )}
         />
 
-        <AppButton type="submit" fullWidth variant="contained" sx={{ mb: 2 }}>
+        <AppButton
+          loading={auth.status === 'loading'}
+          type="submit"
+          fullWidth
+          variant="contained"
+          sx={{ mb: 2 }}
+        >
           Login.
         </AppButton>
         <Box display="flex" justifyContent="center">
