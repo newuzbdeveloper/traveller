@@ -9,12 +9,13 @@ export function useAuthStateChanges() {
   useEffect(() => {
     auth.onAuthStateChanged((user) => {
       if (user) {
-        const userInfo = {
-          displayName: user.displayName,
-          email: user.email ?? '',
-          uid: user.uid,
-        };
-        dispatch(userLoaded(userInfo));
+        dispatch(
+          userLoaded({
+            displayName: user.displayName,
+            email: user.email ?? '',
+            uid: user.uid,
+          }),
+        );
       } else {
         dispatch(userLoggedOut());
       }

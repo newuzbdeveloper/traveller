@@ -33,7 +33,7 @@ export const authSlice = createSlice({
     userLoggedOut: (state) => {
       state.user = null;
       state.error = null;
-      state.status = 'idle';
+      state.status = 'succeeded';
     },
     setUserName: (state, action: PayloadAction<string | null | undefined>) => {
       if (state.user) {
@@ -71,6 +71,7 @@ export const authSlice = createSlice({
 
 export const { userLoaded, userLoggedOut, setUserName } = authSlice.actions;
 
+export const selectAuth = (state: RootState) => state.auth;
 export const selectUser = (state: RootState) => state.auth.user;
 
 export default authSlice.reducer;
