@@ -4,16 +4,16 @@ import { RootState } from '@store/index';
 
 import { loginUser, registerUser } from './authActions';
 
-interface AuthState {
-  user: UserInfo | null;
-  status: 'loading' | 'idle' | 'failed' | 'succeeded';
-  error?: string | null;
-}
-
 interface UserInfo {
   uid: string;
   displayName: string | null | undefined;
   email: string;
+}
+
+interface AuthState {
+  user: UserInfo | null;
+  status: 'loading' | 'idle' | 'failed' | 'succeeded';
+  error?: string | null;
 }
 
 const initialState: AuthState = {
