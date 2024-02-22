@@ -1,5 +1,9 @@
 import { Box, Typography } from '@mui/material';
 
+interface Props {
+  isClosed?: boolean;
+}
+
 function LogoIcon() {
   return (
     <svg
@@ -18,7 +22,7 @@ function LogoIcon() {
   );
 }
 
-function Logo() {
+function Logo({ isClosed }: Props) {
   return (
     <Box
       sx={{
@@ -29,7 +33,8 @@ function Logo() {
       }}
     >
       <LogoIcon />
-      <Typography variant="h4">Traveller.</Typography>
+
+      {!isClosed && <Typography variant="h4">Traveller.</Typography>}
     </Box>
   );
 }

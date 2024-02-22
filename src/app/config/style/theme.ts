@@ -1,12 +1,8 @@
-
-
 import { type LinkProps, createTheme } from '@mui/material';
 
 import { FontFamilies } from './FontFamilies';
 import { FontWeights } from './FontWeights';
 import LinkBehavior from './LinkBehavior';
-
-
 
 export const theme = createTheme({
   palette: {
@@ -16,6 +12,9 @@ export const theme = createTheme({
     text: {
       primary: '#223644',
       secondary: '#64727C',
+    },
+    grey: {
+      [100]: '#F9F9F9',
     },
   },
   components: {

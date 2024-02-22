@@ -3,13 +3,13 @@ import { Navigate } from 'react-router-dom';
 
 import { Box, Link, TextField, Typography } from '@mui/material';
 
-import { AppRoutes } from '@config/styles/routes/AppRoutes';
+import { AppRoutes } from '@config/routes/AppRoutes';
 import AppButton from '@features/ui/AppButton';
 import { auth } from '@services/firebase';
 import { useAppDispatch, useAppSelector } from '@store/index';
 
 import { registerUser } from '../store/authActions';
-import { selectUser, setUserName } from '../store/authSlice';
+import { selectAuth, setUserName } from '../store/authSlice';
 
 interface FormInput {
   email: string;
@@ -20,8 +20,8 @@ interface FormInput {
 
 function SignUpForm() {
   const { control, handleSubmit, password, onSubmit } = useSignUpForm();
-  const user = useAppSelector(selectUser);
-  if (user) {
+  const auth = useAppSelector(selectAuth);
+  if (auth.user) {
     return <Navigate to={AppRoutes.dashboard} replace />;
   }
   return (
@@ -66,7 +66,6 @@ function SignUpForm() {
               id="email"
               label="Email Address"
               autoComplete="email"
-              autoFocus
               helperText={fieldState.error?.message}
               error={Boolean(fieldState.error)}
               sx={{ mb: 3, mt: 0 }}
@@ -126,7 +125,13 @@ function SignUpForm() {
           )}
         />
 
-        <AppButton type="submit" fullWidth variant="contained" sx={{ mb: 2 }}>
+        <AppButton
+          loading={auth.status === 'loading'}
+          type="submit"
+          fullWidth
+          variant="contained"
+          sx={{ mb: 2 }}
+        >
           Sign up.
         </AppButton>
         <Box display="flex" justifyContent="center">
