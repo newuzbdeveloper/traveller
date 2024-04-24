@@ -2,7 +2,7 @@ import { Route, Routes } from 'react-router-dom';
 
 import AccountLayout from '@features/ui/layout/AccountLayout/AccountLayout';
 import AuthLayout from '@features/ui/layout/AuthLayout';
-import AddTripPage from '@pages/account/addTrip';
+import AddTripPage from '@pages/account/add-trip';
 import Dashboard from '@pages/account/dashboard';
 import TripsPage from '@pages/account/trips';
 import HomePage from '@pages/home';
@@ -13,7 +13,7 @@ import SignUpPage from '@pages/sign-up';
 import { AppRoutes } from '../AppRoutes';
 import ProtectedRoute from './ProtectedRoute';
 
-function AppRouter() {
+export default function AppRouter() {
   return (
     <Routes>
       {/* Public Pages */}
@@ -39,5 +39,3 @@ function AppRouter() {
     </Routes>
   );
 }
-
-export default AppRouter;

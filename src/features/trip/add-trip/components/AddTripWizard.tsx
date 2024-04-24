@@ -1,0 +1,53 @@
+import { Box, Typography } from '@mui/material';
+
+import { WIZARD_STEPS } from '../data';
+import DesktopStepper from './navigation/DesktopStepper';
+
+export default function AddTripWizard() {
+  const currentStep = 0;
+  const stepData = WIZARD_STEPS[currentStep];
+  const StepComponent = stepData.Component;
+  return (
+    <Box>
+      <DesktopStepper currentStep={currentStep} steps={WIZARD_STEPS} />
+      <Box
+        sx={{
+          bgcolor: 'white',
+          p: { xs: 2, md: 3 },
+          pb: { xs: 10, md: 13 },
+          borderRadius: 4,
+          maxWidth: 926,
+          mx: 'auto',
+          position: 'relative',
+        }}
+      >
+        <Typography variant="body1" color="text.secondary" sx={{ mb: 1 }}>
+          Step {currentStep + 1}
+        </Typography>
+        <Typography
+          variant="h4"
+          color="text.primary"
+          sx={{ mb: { xs: 3, md: 1 } }}
+        >
+          {stepData.title}
+        </Typography>
+        <Typography
+          variant="subtitle1"
+          color="text.secondary"
+          sx={{ display: { xs: 'none', md: 'block' }, mb: 3 }}
+        >
+          {stepData.description}
+        </Typography>
+        <Box
+          sx={{
+            minHeight: { xs: '58vh', md: '40vh' },
+            maxHeight: { xs: '58vh', md: '40vh' },
+            overflowY: 'hidden',
+          }}
+        >
+          <StepComponent />
+        </Box>
+      </Box>
+    </Box>
+  );
+}

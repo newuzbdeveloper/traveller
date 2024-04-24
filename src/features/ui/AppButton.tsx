@@ -5,13 +5,14 @@ interface Props {
   type?: 'button' | 'submit' | 'reset';
   variant?: 'text' | 'contained' | 'outlined';
   children: React.ReactNode;
-  linkcomponent?: React.ElementType;
+  LinkComponent?: React.ElementType;
   loading?: boolean;
   onClick?: () => void;
   fullWidth?: boolean;
   sx?: SxProps<Theme>;
   href?: string;
   endIcon?: React.ReactNode;
+  startIcon?: React.ReactNode;
 }
 
 function AppButton({
@@ -20,17 +21,19 @@ function AppButton({
   fullWidth,
   children,
   loading,
-  linkcomponent,
+  LinkComponent,
   href,
   endIcon,
+  startIcon,
   onClick,
   sx,
 }: Props) {
   return (
     <LoadingButton
-      LinkComponent={linkcomponent}
+      LinkComponent={LinkComponent}
       loading={loading}
       endIcon={endIcon}
+      startIcon={startIcon}
       href={href}
       onClick={onClick}
       type={type}
