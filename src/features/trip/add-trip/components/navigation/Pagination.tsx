@@ -8,22 +8,22 @@ import { WIZARD_STEPS } from '../../data';
 
 export default function Pagination() {
   const currentStep = 0;
-  const { md } = useBreakpoints();
+  const { md, lg } = useBreakpoints();
 
   return (
     <MobileStepper
-      variant={md ? 'dots' : 'text'}
+      variant={lg ? 'dots' : 'text'}
       position="static"
       activeStep={currentStep}
       steps={WIZARD_STEPS.length}
       nextButton={
-        <AppButton type="submit" fullWidth endIcon={<ArrowForward />}>
+        <AppButton type="submit" fullWidth={!md} endIcon={<ArrowForward />}>
           Next
         </AppButton>
       }
       backButton={
         <AppButton
-          fullWidth
+          fullWidth={!md}
           variant="outlined"
           startIcon={<ArrowBack />}
           sx={{ visibility: currentStep === 0 ? 'hidden' : 'visible' }}
