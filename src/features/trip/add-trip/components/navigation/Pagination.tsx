@@ -12,9 +12,6 @@ export default function Pagination() {
   return (
     <MobileStepper
       variant={lg ? 'dots' : 'text'}
-  return (
-    <MobileStepper
-      variant={md ? 'dots' : 'text'}
       position="static"
       activeStep={currentStep}
       steps={WIZARD_STEPS.length}
@@ -26,7 +23,6 @@ export default function Pagination() {
       backButton={
         <AppButton
           fullWidth={!md}
-n
           variant="outlined"
           startIcon={<ArrowBack />}
           sx={{ visibility: currentStep === 0 ? 'hidden' : 'visible' }}
