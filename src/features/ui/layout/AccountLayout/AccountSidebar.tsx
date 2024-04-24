@@ -1,4 +1,4 @@
-import { Link, NavLink } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
 import AddIcon from '@mui/icons-material/Add';
 import LogoutIcon from '@mui/icons-material/Logout';
@@ -6,6 +6,7 @@ import {
   Avatar,
   Box,
   ButtonBase,
+  Link,
   List,
   ListItem,
   ListItemButton,
@@ -30,12 +31,12 @@ interface Props {
   isClosed?: boolean;
 }
 
-function AccountSidebar({ isClosed, onClose }: Props) {
+export default function AccountSidebar({ isClosed, onClose }: Props) {
   const { md } = useBreakpoints();
   const user = useAppSelector(selectUser);
   const userInitial = user?.displayName?.split(' ')[0][0];
 
-  const onClickLink = () => {
+  const onLinkClick = () => {
     if (!md) {
       onClose();
     }
@@ -69,7 +70,7 @@ function AccountSidebar({ isClosed, onClose }: Props) {
               <NavLink
                 to={path}
                 style={{ width: '100%', textDecoration: 'none' }}
-                onClick={onClickLink}
+                onClick={onLinkClick}
               >
                 {({ isActive }) => (
                   <ListItemButton
@@ -113,9 +114,9 @@ function AccountSidebar({ isClosed, onClose }: Props) {
         </List>
         <AppButton
           fullWidth
-          linkcomponent={Link}
+          LinkComponent={Link}
           href={AppRoutes.addTrip}
-          onClick={onClickLink}
+          onClick={onLinkClick}
           sx={{ mt: 2 }}
         >
           <Stack
@@ -124,7 +125,7 @@ function AccountSidebar({ isClosed, onClose }: Props) {
             alignItems="center"
             direction="row"
             gap={1}
-            onClick={onClickLink}
+            onClick={onLinkClick}
           >
             {isClosed ? '' : 'Go Travel'}
             <AddIcon />
@@ -145,5 +146,3 @@ function AccountSidebar({ isClosed, onClose }: Props) {
     </Stack>
   );
 }
-
-export default AccountSidebar;

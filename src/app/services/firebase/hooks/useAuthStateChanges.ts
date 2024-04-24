@@ -7,7 +7,7 @@ import { useAppDispatch } from '@store/index';
 export function useAuthStateChanges() {
   const dispatch = useAppDispatch();
   useEffect(() => {
-    auth.onAuthStateChanged((user) => {
+    const authStateListenerUnsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
         dispatch(
           userLoaded({
@@ -20,6 +20,8 @@ export function useAuthStateChanges() {
         dispatch(userLoggedOut());
       }
     });
+
+    return () => authStateListenerUnsubscribe();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 }
