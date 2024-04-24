@@ -9,7 +9,6 @@ import { WIZARD_STEPS } from '../../data';
 export default function Pagination() {
   const currentStep = 0;
   const { md, lg } = useBreakpoints();
-  
   return (
     <MobileStepper
       variant={lg ? 'dots' : 'text'}
