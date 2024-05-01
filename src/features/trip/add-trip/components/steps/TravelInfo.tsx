@@ -2,9 +2,11 @@ import { Controller, type SubmitHandler, useForm } from 'react-hook-form';
 
 import ImageSearchIcon from '@mui/icons-material/ImageSearch';
 import { ButtonBase, Stack, TextField, Typography } from '@mui/material';
-import { DatePicker } from '@mui/x-date-pickers';
 
 import { Colors } from '@config/style';
+import PreviewImageDialog from '@features/trip/components/PreviewImageDialog';
+import SelectedDateInput from '@features/ui/form/SelectDateInout';
+import useDialog from '@hooks/useDialog';
 
 import Pagination from '../navigation/Pagination';
 
@@ -18,6 +20,7 @@ interface FormInput {
 
 export default function TravelInfo() {
   const { control, handleSubmit, onSubmit, formValues } = useTravelInfoForm();
+  const { isOpen, open, close } = useDialog();
 
   return (
     <>
@@ -30,6 +33,7 @@ export default function TravelInfo() {
       >
         <Stack direction={{ xs: 'column', md: 'row' }} gap={3}>
           <ButtonBase
+            onClick={open}
             sx={{
               display: 'flex',
               alignItems: 'center',
@@ -71,50 +75,20 @@ export default function TravelInfo() {
             />
 
             <Stack direction="row" gap={2}>
-              <Controller
+              <SelectedDateInput
                 name="startDate"
+                label="Start Date"
                 control={control}
-                rules={{ required: 'Please specify start date.' }}
-                render={({ field: { ref, ...field }, fieldState }) => (
-                  <DatePicker
-                    label="Start Date*"
-                    slotProps={{
-                      textField: {
-                        inputRef: ref,
-                        variant: 'standard',
-                        helperText: fieldState.error?.message,
-                        error: Boolean(fieldState.error),
-                      },
-                      inputAdornment: { position: 'start' },
-                    }}
-                    {...field}
-                    sx={{ width: '100%', '& .MuiSvgIcon-root': { ml: 0.1 } }}
-                    maxDate={formValues.endDate}
-                  />
-                )}
+                requiredErrorText="Please specify starting date."
+                maxDate={formValues.endDate}
               />
 
-              <Controller
+              <SelectedDateInput
                 name="endDate"
+                label="End Date"
                 control={control}
-                rules={{ required: 'Please specify end date.' }}
-                render={({ field: { ref, ...field }, fieldState }) => (
-                  <DatePicker
-                    label="End Date*"
-                    slotProps={{
-                      textField: {
-                        inputRef: ref,
-                        variant: 'standard',
-                        helperText: fieldState.error?.message,
-                        error: Boolean(fieldState.error),
-                      },
-                      inputAdornment: { position: 'start' },
-                    }}
-                    {...field}
-                    sx={{ width: '100%', '& .MuiSvgIcon-root': { ml: 0.1 } }}
-                    minDate={formValues.startDate}
-                  />
-                )}
+                requiredErrorText="Please specify ending date."
+                minDate={formValues.startDate}
               />
             </Stack>
           </Stack>
@@ -127,13 +101,11 @@ export default function TravelInfo() {
               variant="standard"
               inputRef={ref}
               margin="normal"
-              required
               fullWidth
               id="description"
               label="Description"
               multiline
               maxRows={6}
-              autoFocus
               inputProps={{ maxLength: 200 }}
               helperText={
                 fieldState.error?.message ?? `${field.value.length} / 200`
@@ -144,6 +116,7 @@ export default function TravelInfo() {
           )}
         />
         <Pagination />
+        <PreviewImageDialog isOpen={isOpen} onClose={close} />
       </Stack>
     </>
   );
