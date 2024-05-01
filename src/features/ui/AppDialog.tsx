@@ -60,6 +60,7 @@ export default function AppDialog({
         sx={{
           pt: 8.75,
           px: { xs: MOBILE_PADDING_X, md: DESKTOP_PADDING_X },
+          pb: 3,
           textAlign: 'center',
         }}
         variant="h4"
@@ -67,7 +68,7 @@ export default function AppDialog({
         {title}
       </Typography>
       <DialogContent
-        sx={{ px: { xs: MOBILE_PADDING_X, md: DESKTOP_PADDING_X }, py: 3 }}
+        sx={{ px: { xs: MOBILE_PADDING_X, md: DESKTOP_PADDING_X }, py: 0 }}
       >
         {children}
       </DialogContent>
@@ -75,7 +76,7 @@ export default function AppDialog({
         sx={{
           px: { xs: MOBILE_PADDING_X, md: DESKTOP_PADDING_X },
           pb: { xs: MOBILE_PADDING_Y, md: DESKTOP_PADDING_Y },
-          pt: 0,
+          pt: 3,
         }}
       >
         <AppButton fullWidth onClick={onPrimaryButtonClick}>
