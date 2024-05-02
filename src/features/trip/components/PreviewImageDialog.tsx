@@ -6,15 +6,19 @@ import FileUploadButton from '@features/trip/components/FileUploadButton';
 import { TripPreviewImage } from '@features/trip/data';
 import AppDialog from '@features/ui/AppDialog';
 
+import { Trip } from '../types';
+
 interface Props {
   isOpen: boolean;
   onClose: () => void;
+  onSave: (previewImage: Trip['previewImage']) => void;
 }
 
-export default function PreviewImageDialog({ isOpen, onClose }: Props) {
-  const [selectedImage, setSelectedImage] = useState<null | TripPreviewImage>(
-    null,
-  );
+export default function PreviewImageDialog({ isOpen, onClose, onSave }: Props) {
+  const [selectedImage, setSelectedImage] =
+    useState<Trip['previewImage']>(null);
+
+  const onSaveClick = () => onSave(selectedImage);
 
   return (
     <AppDialog
@@ -22,9 +26,7 @@ export default function PreviewImageDialog({ isOpen, onClose }: Props) {
       title="Select your preview image"
       isOpen={isOpen}
       onClose={onClose}
-      onPrimaryButtonClick={function (): void {
-        throw new Error('Function not implemented.');
-      }}
+      onPrimaryButtonClick={onSaveClick}
     >
       <Grid container columns={{ xs: 2, md: 3 }} spacing={{ xs: 0.5, md: 1.5 }}>
         {TripPreviewImage.map((image) => (
@@ -35,9 +37,11 @@ export default function PreviewImageDialog({ isOpen, onClose }: Props) {
                 overflow: 'hidden',
                 border: 4,
                 borderColor:
-                  selectedImage?.id === image.id ? 'primary.main' : 'white',
+                  selectedImage?.templateImageId === image.id
+                    ? 'primary.main'
+                    : 'white',
               }}
-              onClick={() => setSelectedImage(image)}
+              onClick={() => setSelectedImage({ templateImageId: image.id })}
             >
               <img
                 src={image.src}
