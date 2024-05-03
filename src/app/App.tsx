@@ -1,8 +1,8 @@
 import { SnackbarProvider } from 'notistack';
 import { PersistGate } from 'redux-persist/integration/react';
 
-import { ThemeProvider } from '@mui/material';
 import { CssBaseline } from '@mui/material';
+import { ThemeProvider } from '@mui/material/styles';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 

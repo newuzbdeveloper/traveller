@@ -42,7 +42,11 @@ function AppButton({
       sx={{
         borderRadius: 2,
         textTransform: 'none',
-        height: { xs: 48, md: 56 },
+        height: {
+          xs: variant === 'text' ? 48 : 56,
+          md: variant === 'text' ? 48 : 56,
+        },
+        width: fullWidth ? '100%' : 'fit-content',
         ...sx,
       }}
     >

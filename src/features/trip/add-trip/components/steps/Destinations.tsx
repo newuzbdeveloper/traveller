@@ -1,25 +1,44 @@
-import { Controller, type SubmitHandler, useForm } from 'react-hook-form';
+import {
+  Controller,
+  type SubmitHandler,
+  useFieldArray,
+  useForm,
+} from 'react-hook-form';
+import { useDispatch } from 'react-redux';
+import { v4 as uuidv4 } from 'uuid';
 
-import ImageSearchIcon from '@mui/icons-material/ImageSearch';
-import { ButtonBase, Stack, TextField, Typography } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { Stack, TextField } from '@mui/material';
 
-import { Colors } from '@config/style';
-import SelectedDateInput from '@features/ui/form/SelectDateInput';
-import useDialog from '@hooks/useDialog';
+import { MAX_NUMBER_DESTINATIONS } from '@features/trip/constants';
+import { Trip } from '@features/trip/types';
+import AppButton from '@features/ui/AppButton';
+import AppIconButton from '@features/ui/AppIconButton';
+import { useAppSelector } from '@store/index';
 
+import {
+  nextStep,
+  selectWizardTrip,
+  setDestinationsInfo,
+  setLocationFromInfo,
+} from '../../store/tripWizardSlice';
 import Pagination from '../navigation/Pagination';
 
 interface FormInput {
-  previewImage: string | null;
-  name: string;
-  description: string;
-  startDate: Date | null;
-  endDate: Date | null;
+  locationFrom: Trip['locationFrom'];
+  destinations: Trip['destinations'];
 }
 
 export default function Destinations() {
-  const { control, handleSubmit, onSubmit, formValues } = useTravelInfoForm();
-  const { open } = useDialog();
+  const {
+    control,
+    handleSubmit,
+    onSubmit,
+    destinations,
+    addDestination,
+    removeDestination,
+  } = useDestinationsForm();
 
   return (
     <>
@@ -28,119 +47,126 @@ export default function Destinations() {
         noValidate
         onSubmit={handleSubmit(onSubmit)}
         sx={{ width: '100%' }}
-        gap={3}
+        gap={2}
       >
-        <Stack direction={{ xs: 'column', md: 'row' }} gap={3}>
-          <ButtonBase
-            onClick={open}
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              flexDirection: 'column',
-              justifyContent: 'center',
-              height: 152,
-              minWidth: { xs: '100%', md: 152 },
-              gap: 0.5,
-              borderRadius: 4,
-              border: 1,
-              borderColor: 'text.secondary',
-            }}
-          >
-            <ImageSearchIcon sx={{ color: Colors.disabled }} />
-            <Typography color={Colors.disabled} variant="subtitle1">
-              Preview Image
-            </Typography>
-          </ButtonBase>
-          <Stack width="100%" gap={3}>
-            <Controller
-              name="name"
-              control={control}
-              rules={{ required: 'Please specify your trip name.' }}
-              render={({ field: { ref, ...field }, fieldState }) => (
-                <TextField
-                  variant="standard"
-                  inputRef={ref}
-                  margin="normal"
-                  required
-                  fullWidth
-                  id="name"
-                  label="Trip Name"
-                  autoFocus
-                  helperText={fieldState.error?.message}
-                  error={Boolean(fieldState.error)}
-                  {...field}
-                />
+        <Stack gap={3}>
+          <Controller
+            name="locationFrom"
+            control={control}
+            rules={{ required: 'Please specify where your trip starts.' }}
+            render={({ field: { ref, ...field }, fieldState }) => (
+              <TextField
+                autoFocus
+                required
+                variant="standard"
+                inputRef={ref}
+                margin="normal"
+                fullWidth
+                id="description"
+                label="From"
+                multiline
+                maxRows={6}
+                inputProps={{ maxLength: 200 }}
+                helperText={fieldState.error?.message}
+                error={Boolean(fieldState.error)}
+                {...field}
+              />
+            )}
+          />
+          {destinations.map((destination, index) => (
+            <Stack
+              direction="row"
+              gap={1}
+              key={destination.id}
+              alignItems="flex-end"
+            >
+              <Controller
+                name={`destinations.${index}.name`}
+                control={control}
+                rules={{ required: 'Please specify your destination.' }}
+                render={({ field: { ref, ...field }, fieldState }) => (
+                  <TextField
+                    required
+                    variant="standard"
+                    inputRef={ref}
+                    margin="normal"
+                    fullWidth
+                    id={`${destination}.${index}`}
+                    label={`Destination ${index + 1}`}
+                    multiline
+                    maxRows={6}
+                    inputProps={{ maxLength: 200 }}
+                    helperText={fieldState.error?.message}
+                    error={Boolean(fieldState.error)}
+                    {...field}
+                  />
+                )}
+              />
+              {index !== 0 && (
+                <AppIconButton
+                  onClick={() => removeDestination(index)}
+                  aria-label="Remove Destination."
+                >
+                  <DeleteIcon />
+                </AppIconButton>
               )}
-            />
-
-            <Stack direction="row" gap={2}>
-              <SelectedDateInput
-                name="startDate"
-                label="Start Date"
-                control={control}
-                requiredErrorText="Please specify starting date."
-                maxDate={formValues.endDate}
-              />
-
-              <SelectedDateInput
-                name="endDate"
-                label="End Date"
-                control={control}
-                requiredErrorText="Please specify ending date."
-                minDate={formValues.startDate}
-              />
             </Stack>
-          </Stack>
+          ))}
         </Stack>
-        <Controller
-          name="description"
-          control={control}
-          render={({ field: { ref, ...field }, fieldState }) => (
-            <TextField
-              variant="standard"
-              inputRef={ref}
-              margin="normal"
-              fullWidth
-              id="description"
-              label="Description"
-              multiline
-              maxRows={6}
-              inputProps={{ maxLength: 200 }}
-              helperText={
-                fieldState.error?.message ?? `${field.value.length} / 200`
-              }
-              error={Boolean(fieldState.error)}
-              {...field}
-            />
-          )}
-        />
+        {destinations.length < MAX_NUMBER_DESTINATIONS && (
+          <AppButton
+            variant="text"
+            onClick={addDestination}
+            startIcon={<AddIcon />}
+          >
+            ADD DESTINATION
+          </AppButton>
+        )}
         <Pagination />
       </Stack>
     </>
   );
 }
 
-function useTravelInfoForm() {
-  const { control, handleSubmit, watch } = useForm<FormInput>({
+function useDestinationsForm() {
+  const dispatch = useDispatch();
+  const trip = useAppSelector(selectWizardTrip);
+  const { control, handleSubmit } = useForm<FormInput>({
     defaultValues: {
-      name: '',
-      description: '',
-      startDate: null,
-      endDate: null,
+      locationFrom: trip.locationFrom,
+      destinations: trip.destinations,
     },
   });
 
-  const formValues = watch();
+  const {
+    fields: destinations,
+    append,
+    remove,
+  } = useFieldArray({
+    control,
+    name: 'destinations',
+  });
 
-  const onSubmit: SubmitHandler<FormInput> = async (data) => {
-    // Todo: Save stepInfo
-    console.log(data);
+  const addDestination = () => {
+    append({ id: uuidv4(), name: '' });
+  };
+
+  const removeDestination = (index: number) => {
+    remove(index);
+  };
+
+  const onSubmit: SubmitHandler<FormInput> = (data) => {
+    dispatch(setLocationFromInfo(data.locationFrom));
+    dispatch(setDestinationsInfo(data.destinations));
+    dispatch(nextStep());
   };
 
   return {
     control,
     handleSubmit,
     onSubmit,
-    formValues,
+    destinations,
+    addDestination,
+    removeDestination,
   };
 }
