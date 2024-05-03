@@ -4,8 +4,8 @@ interface Props {
   onClick: () => void;
   'aria-label': string;
   children: JSX.Element;
-  isSmall: boolean;
-  sx: SxProps<Theme>;
+  isSmall?: boolean;
+  sx?: SxProps<Theme>;
 }
 
 function AppIconButton(props: Props) {
@@ -16,8 +16,8 @@ function AppIconButton(props: Props) {
       variant="outlined"
       sx={{
         borderRadius: 2,
-        width: props.isSmall ? 34 : 58,
-        height: props.isSmall ? 34 : 58,
+        width: { xs: props.isSmall ? 34 : 48, md: props.isSmall ? 34 : 58 },
+        height: { xs: props.isSmall ? 34 : 48, md: props.isSmall ? 34 : 58 },
         minWidth: 'auto',
         ...props.sx,
       }}
