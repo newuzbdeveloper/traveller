@@ -121,7 +121,6 @@ export default function TravelInfo() {
                   variant="standard"
                   inputRef={ref}
                   margin="normal"
-                  required
                   fullWidth
                   id="name"
                   label="Trip Name"

@@ -1,5 +1,6 @@
 import { MAX_NUMBER_DESTINATIONS } from '../constants';
 import Destinations from './components/steps/Destinations';
+import Expenses from './components/steps/Expenses';
 import Places from './components/steps/Places';
 import TravelInfo from './components/steps/TravelInfo';
 import { WizardSteps } from './types';
@@ -26,7 +27,7 @@ export const WIZARD_STEPS: WizardSteps[] = [
     title: 'Expenses',
     description:
       'Easily enter details about each expense and stay organized and informed about where your money is going.',
-    Component: TravelInfo,
+    Component: Expenses,
   },
   {
     title: 'Documents',
