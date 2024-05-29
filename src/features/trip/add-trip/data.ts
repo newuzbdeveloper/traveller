@@ -1,5 +1,6 @@
 import { MAX_NUMBER_DESTINATIONS } from '../constants';
 import Destinations from './components/steps/Destinations';
+import Documents from './components/steps/Documents';
 import Expenses from './components/steps/Expenses';
 import Places from './components/steps/Places';
 import TravelInfo from './components/steps/TravelInfo';
@@ -32,7 +33,7 @@ export const WIZARD_STEPS: WizardSteps[] = [
   {
     title: 'Documents',
     description: 'Upload documents that you need for your trip.',
-    Component: TravelInfo,
+    Component: Documents,
   },
   {
     title: 'Packing list',

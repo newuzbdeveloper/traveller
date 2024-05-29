@@ -16,6 +16,7 @@ export const theme = createTheme({
     },
     grey: {
       [100]: '#F9F9F9',
+      [200]: '#EAEAEA',
     },
   },
   components: {
