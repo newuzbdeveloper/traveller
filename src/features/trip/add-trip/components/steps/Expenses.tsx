@@ -1,5 +1,4 @@
 import { type SubmitHandler, useFieldArray, useForm } from 'react-hook-form';
-import { useDispatch } from 'react-redux';
 
 import AddIcon from '@mui/icons-material/Add';
 import { Stack } from '@mui/material';
@@ -9,7 +8,7 @@ import ExpensesTable from '@features/trip/components/Expenses/ExpensesTable';
 import type { Expense, Trip } from '@features/trip/types';
 import AppButton from '@features/ui/AppButton';
 import useDialog from '@hooks/useDialog';
-import { useAppSelector } from '@store/index';
+import { useAppDispatch, useAppSelector } from '@store/index';
 
 import {
   nextStep,
@@ -62,7 +61,7 @@ function useExpensesForm({
   closeExpenseDialog: () => void;
 }) {
   const trip = useAppSelector(selectWizardTrip);
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const { control, handleSubmit, watch } = useForm<FormInput>({
     defaultValues: {
@@ -87,7 +86,6 @@ function useExpensesForm({
   const expenses = watch('expenses');
 
   const onSubmit: SubmitHandler<FormInput> = (data) => {
-    console.log(data);
     dispatch(setExpensesInfo(data.expenses));
     dispatch(nextStep());
   };

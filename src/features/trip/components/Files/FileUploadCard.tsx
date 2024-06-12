@@ -13,11 +13,19 @@ interface Props {
   mainText: string;
   subText: string;
   sx?: SxProps<Theme>;
+  showSubtext: boolean;
+  onClick?: () => void;
 }
 
-export default function FileUploadButton({ mainText, subText, sx }: Props) {
+export default function FileUploadCard({
+  mainText,
+  subText,
+  sx,
+  showSubtext,
+  onClick,
+}: Props) {
   return (
-    <Box sx={{ height: '100%', width: '100%', ...sx }}>
+    <Box sx={{ height: '100%', width: '100%', ...sx }} onClick={onClick}>
       <ButtonBase
         sx={{
           display: 'flex',
@@ -36,14 +44,16 @@ export default function FileUploadButton({ mainText, subText, sx }: Props) {
         <Typography component="span" variant="body2">
           {mainText}
         </Typography>
-        <Typography
-          component="span"
-          variant="caption"
-          color="text.secondary"
-          sx={{ display: { xs: 'none', md: 'block' } }}
-        >
-          {subText}
-        </Typography>
+        {showSubtext && (
+          <Typography
+            component="span"
+            variant="caption"
+            color="text.secondary"
+            sx={{ display: { xs: 'none', md: 'block' } }}
+          >
+            {subText}
+          </Typography>
+        )}
       </ButtonBase>
     </Box>
   );
