@@ -1,8 +1,6 @@
-import { useDispatch } from 'react-redux';
-
 import DocumentsUploadForm from '@features/trip/components/Files/DocumentsUploadForm';
 import { TripFile } from '@features/trip/types';
-import { useAppSelector } from '@store/index';
+import { useAppDispatch, useAppSelector } from '@store/index';
 
 import {
   nextStep,
@@ -12,30 +10,35 @@ import {
 import Pagination from '../navigation/Pagination';
 
 export default function Documents() {
-  const { onSubmit, documents } = useDocumentsForm();
+  const { onSubmit, documents, onChange } = useDocumentsForm();
   return (
     <>
       <DocumentsUploadForm
         defaultFiles={documents}
         onSubmit={onSubmit}
         SubmitComponent={<Pagination />}
+        onChange={onChange}
       />
     </>
   );
 }
 
 function useDocumentsForm() {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const trip = useAppSelector(selectWizardTrip);
 
   const onSubmit = (data: TripFile[]) => {
     dispatch(setDocumentsInfo(data));
     dispatch(nextStep());
-    console.log(data, 'data1');
+  };
+
+  const onChange = (data: TripFile[]) => {
+    dispatch(setDocumentsInfo(data));
   };
 
   return {
     onSubmit,
     documents: trip.documents,
+    onChange,
   };
 }

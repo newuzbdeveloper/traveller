@@ -14,6 +14,7 @@ interface Props {
   url?: string | null;
   onFileRemoveClick: () => void;
   uploadProgress: number | undefined;
+  isRemoving: boolean;
 }
 
 export default function DocumentCard({
@@ -21,6 +22,7 @@ export default function DocumentCard({
   url,
   onFileRemoveClick,
   uploadProgress,
+  isRemoving,
 }: Props) {
   return (
     <Box
@@ -55,13 +57,14 @@ export default function DocumentCard({
           position: 'absolute',
           opacity: uploadProgress ? 0.2 : 1,
         }}
+        disabled={isRemoving}
       >
-        <CloseIcon />
+        {isRemoving ? <CircularProgress size={24} /> : <CloseIcon />}
       </IconButton>
       <Stack
         component={Link}
-        href={url ?? '#'}
-        target="_blank"
+        href={isRemoving ? '' : url ?? '#'}
+        target={isRemoving ? '_self' : '_blank'}
         rel="noopener noreferrer"
         sx={{
           gap: 1,
