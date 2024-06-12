@@ -142,7 +142,7 @@ export function useStorage({ onAllUploadSuccess }: Props) {
               ...prevState,
               uploadedFiles: newUploadedFiles,
               uploadProgresses: newProgresses,
-              uploadedFilesCount: ++prevState.uploadedFilesCount,
+              uploadedFilesCount: prevState.uploadedFilesCount + 1,
             };
           });
         },
