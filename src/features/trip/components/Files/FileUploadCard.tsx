@@ -31,7 +31,7 @@ export default function FileUploadCard({
           display: 'flex',
           flexDirection: 'column',
           gap: 1,
-          height: { xs: '100%', md: 260 },
+          height: '100%',
           width: '100%',
           color: 'primary.main',
           px: 1,
