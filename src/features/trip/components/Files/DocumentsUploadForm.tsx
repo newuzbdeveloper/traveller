@@ -7,21 +7,28 @@ import {
   useForm,
 } from 'react-hook-form';
 
-import { FormHelperText, Stack } from '@mui/material';
+import { Box, FormHelperText, Stack } from '@mui/material';
 
 import useToast from '@hooks/useErrorToast';
 import { getDownloadURL, useStorage } from '@services/firebase';
 
-import { MAX_FILE_SIZE_MB } from '../../constants';
+import {
+  ACCEPTED_DOCUMENT_FORMATS,
+  ACCEPTED_PHOTO_FORMATS,
+  MAX_FILE_SIZE_MB,
+  MAX_TRIP_PHOTOS,
+} from '../../constants';
 import type { FilesToUpload, TripFile } from '../../types';
 import DocumentCard from './DocumentCard';
 import FileUploadCard from './FileUploadCard';
+import PhotoCard from './PhotoCard';
 
 interface Props {
   defaultFiles: TripFile[];
   onSubmit: (files: TripFile[]) => void;
   onChange: (files: TripFile[]) => void;
   SubmitComponent: React.ReactNode;
+  type: 'document' | 'photo';
 }
 
 interface FormInput {
@@ -43,6 +50,12 @@ export default function FilesForm(props: Props) {
     uploadErrors,
   } = useFilesUploadForm(props);
 
+  const isPhotosForm = props.type === 'photo';
+  const isDocumentsForm = props.type === 'document';
+  const acceptedFileFormats = isPhotosForm
+    ? ACCEPTED_PHOTO_FORMATS
+    : ACCEPTED_DOCUMENT_FORMATS;
+
   return (
     <Stack
       component="form"
@@ -55,70 +68,87 @@ export default function FilesForm(props: Props) {
     >
       <FileUploadCard
         onClick={onFileAdd}
-        mainText="Upload document"
-        subText={`PDF (max. ${MAX_FILE_SIZE_MB}MB)`}
+        mainText={`Upload ${props.type}`}
+        subText={`${acceptedFileFormats} (max: ${MAX_FILE_SIZE_MB} )`}
         showSubtext
         sx={{
-          width: { xs: '100%', md: 200 },
-          height: { xs: 140, md: 260 },
+          width: { xs: '100%', md: isPhotosForm ? 261 : 200 },
+          height: { xs: 140, md: isPhotosForm ? 250 : 260 },
         }}
       />
 
-      {files.map((file, index) => {
-        const showCard = Boolean(file?.url || file.storagePath);
+      {Array.isArray(files) &&
+        files.map((file, index) => {
+          const showCard = Boolean(file?.url || file.storagePath);
 
-        return (
-          <Stack key={file.fileName} sx={{ height: 260 }}>
-            {showCard && (
-              <DocumentCard
-                name={file.fileName}
-                url={file.url}
-                onFileRemoveClick={() => onFileRemove(index)}
-                uploadProgress={uploadProgresses[index]}
-                isRemoving={Boolean(
-                  file.storagePath && removingFilePath === file.storagePath,
+          return (
+            <Stack
+              key={file.fileName}
+              sx={{ height: isPhotosForm ? { xs: 171, md: 250 } : 260 }}
+            >
+              {showCard && (
+                <>
+                  {isDocumentsForm && (
+                    <DocumentCard
+                      name={file.fileName}
+                      url={file.url}
+                      onFileRemoveClick={() => onFileRemove(index)}
+                      uploadProgress={uploadProgresses[index]}
+                      isRemoving={Boolean(
+                        file.storagePath &&
+                          removingFilePath === file.storagePath,
+                      )}
+                    />
+                  )}
+                  {isPhotosForm && (
+                    <Box
+                      sx={{
+                        width: { xs: 171, md: 261 },
+                        height: { xs: 171, md: 250 },
+                      }}
+                    >
+                      <PhotoCard
+                        src={file.url}
+                        onFileRemoveClick={() => onFileRemove(index)}
+                        uploadProgress={uploadProgresses[index]}
+                        isRemoving={Boolean(
+                          file.storagePath &&
+                            removingFilePath === file.storagePath,
+                        )}
+                      />
+                    </Box>
+                  )}
+                </>
+              )}
+              {uploadErrors[index] && (
+                <FormHelperText error>{uploadErrors[index]}</FormHelperText>
+              )}
+              <Controller
+                name={`files.${index}`}
+                control={control}
+                rules={{ required: 'Please specify trip name!' }}
+                render={({ field }) => (
+                  <input
+                    ref={index === files.length - 1 ? fileInputRef : null}
+                    type="file"
+                    id="fileInput"
+                    hidden
+                    accept={acceptedFileFormats}
+                    onChange={(event) =>
+                      onFileInputChange(event, field.onChange)
+                    }
+                  />
                 )}
               />
-            )}
-            {uploadErrors[index] && (
-              <FormHelperText error>{uploadErrors[index]}</FormHelperText>
-            )}
-            <Controller
-              name={`files.${index}`}
-              control={control}
-              rules={{ required: 'Please specify trip name!' }}
-              render={({ field }) => (
-                <input
-                  ref={index === files.length - 1 ? fileInputRef : null}
-                  type="file"
-                  id="fileInput"
-                  hidden
-                  onChange={(event) => onFileInputChange(event, field.onChange)}
-                />
-              )}
-            />
-          </Stack>
-        );
-      })}
+            </Stack>
+          );
+        })}
       {props.SubmitComponent}
     </Stack>
   );
 }
 
 function useFilesUploadForm(props: Props) {
-  const {
-    uploadFiles,
-    uploadProgresses,
-    removeFile,
-    isLoading,
-    removingFilePath,
-    uploadErrors,
-  } = useStorage({
-    onAllUploadSuccess: (uploadedFiles) => {
-      props.onSubmit(uploadedFiles);
-    },
-  });
-  const disableChange = isLoading || Boolean(removingFilePath);
   const { showErrorMessage } = useToast();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const { watch, handleSubmit, control } = useForm<FormInput>({
@@ -132,8 +162,29 @@ function useFilesUploadForm(props: Props) {
     name: 'files',
   });
 
+  const {
+    uploadFiles,
+    uploadProgresses,
+    removeFile,
+    isLoading,
+    removingFilePath,
+    uploadErrors,
+  } = useStorage({
+    onAllUploadSuccess: (uploadedFiles) => {
+      props.onSubmit(uploadedFiles);
+    },
+    onSingleUploadSuccess: (index, uploadedFile) => {
+      update(index, uploadedFile);
+    },
+  });
+  const disableChange = isLoading || Boolean(removingFilePath);
   const onSubmit: SubmitHandler<FormInput> = (data) => {
-    if (disableChange) {
+    // if (!disableChange) {
+    //   return;
+    // }
+
+    if (!Array.isArray(data?.files) || data.files.length === 0) {
+      props.onSubmit([]);
       return;
     }
 
@@ -142,7 +193,7 @@ function useFilesUploadForm(props: Props) {
       filteredFiles.pop();
     }
 
-    uploadFiles('documents', filteredFiles);
+    uploadFiles(`${props.type}s`, filteredFiles);
   };
 
   const onFileAdd = () => {
@@ -150,6 +201,13 @@ function useFilesUploadForm(props: Props) {
       return;
     }
 
+    if (
+      props.type === 'photo' &&
+      files.length >= MAX_TRIP_PHOTOS &&
+      !(!files[files.length - 1].fileName && files.length === MAX_TRIP_PHOTOS)
+    ) {
+      return showErrorMessage(`You can upload photos up to ${MAX_TRIP_PHOTOS}`);
+    }
     if (files.length === 0 || files[files.length - 1]?.fileName) {
       append({ fileName: '' });
     }
@@ -181,6 +239,12 @@ function useFilesUploadForm(props: Props) {
 
     if (!file) {
       return;
+    }
+
+    if (file.size > 1024 * 1024 * MAX_FILE_SIZE_MB) {
+      return showErrorMessage(
+        `Your file size is bigger than allowed. Maximum size is ${MAX_FILE_SIZE_MB}MB`,
+      );
     }
 
     if (files.find((existingFile) => existingFile.fileName === file.name)) {
@@ -221,8 +285,8 @@ function useFilesUrlsUpdate(
   files: FilesToUpload[],
   update: UseFieldArrayUpdate<FormInput, 'files'>,
 ) {
-  useEffect(
-    () =>
+  useEffect(() => {
+    if (Array.isArray(files)) {
       files.forEach(async (file, index) => {
         if (!file.url && file.storagePath) {
           const url = await getDownloadURL(file.storagePath);
@@ -233,7 +297,7 @@ function useFilesUrlsUpdate(
             });
           }
         }
-      }),
-    [files, update],
-  );
+      });
+    }
+  }, [files, update]);
 }

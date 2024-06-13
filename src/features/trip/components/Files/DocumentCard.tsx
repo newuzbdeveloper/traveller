@@ -49,6 +49,7 @@ export default function DocumentCard({
       )}
 
       <IconButton
+        aria-label="photo remove"
         onClick={onFileRemoveClick}
         sx={{
           top: 8,
