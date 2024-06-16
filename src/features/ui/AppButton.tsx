@@ -11,6 +11,7 @@ interface Props {
   fullWidth?: boolean;
   sx?: SxProps<Theme>;
   href?: string;
+  disabled?: boolean;
   endIcon?: React.ReactNode;
   startIcon?: React.ReactNode;
 }
@@ -26,6 +27,7 @@ function AppButton({
   endIcon,
   startIcon,
   onClick,
+  disabled,
   sx,
 }: Props) {
   return (
@@ -38,6 +40,7 @@ function AppButton({
       onClick={onClick}
       type={type}
       variant={variant}
+      disabled={disabled}
       fullWidth={fullWidth}
       sx={{
         borderRadius: 2,

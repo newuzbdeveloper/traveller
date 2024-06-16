@@ -95,9 +95,9 @@ export default function DocumentCard({
               color: 'text.primary',
               overflow: 'hidden',
               display: '-webkit-box',
-              '-webkit-line-clamp': '1',
+              WebkitLineClamp: '1',
               'line-clamp': '1',
-              '-webkit-box-orient': 'vertical',
+              WebkitBoxOrient: 'vertical',
             }}
           >
             {name}

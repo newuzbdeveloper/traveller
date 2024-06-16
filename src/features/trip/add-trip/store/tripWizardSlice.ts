@@ -86,6 +86,12 @@ export const tripWizardSlice = createSlice({
     setPhotosInfo: (state, action: PayloadAction<Trip['photos']>) => {
       state.trip.photos = action.payload;
     },
+    setPackingListsInfo: (
+      state,
+      action: PayloadAction<Trip['packingLists']>,
+    ) => {
+      state.trip.packingLists = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(PURGE, () => {
@@ -104,6 +110,7 @@ export const {
   setExpensesInfo,
   setDocumentsInfo,
   setPhotosInfo,
+  setPackingListsInfo,
 } = tripWizardSlice.actions;
 
 export const selectCurrentStep = (state: RootState) =>
