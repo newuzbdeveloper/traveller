@@ -1,4 +1,5 @@
-import { type LinkProps, createTheme } from '@mui/material';
+import { type LinkProps } from '@mui/material';
+import createTheme from '@mui/material/styles/createTheme';
 
 import { Colors } from './Colors';
 import { FontFamilies } from './FontFamilies';
