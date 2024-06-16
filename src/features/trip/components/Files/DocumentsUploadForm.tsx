@@ -69,7 +69,7 @@ export default function FilesForm(props: Props) {
       <FileUploadCard
         onClick={onFileAdd}
         mainText={`Upload ${props.type}`}
-        subText={`${acceptedFileFormats} (max: ${MAX_FILE_SIZE_MB} )`}
+        subText={`${acceptedFileFormats} (max: ${MAX_FILE_SIZE_MB}MB )`}
         showSubtext
         sx={{
           width: { xs: '100%', md: isPhotosForm ? 261 : 200 },
@@ -77,21 +77,36 @@ export default function FilesForm(props: Props) {
         }}
       />
 
-      {Array.isArray(files) &&
-        files.map((file, index) => {
-          const showCard = Boolean(file?.url || file.storagePath);
+      {files.map((file, index) => {
+        const showCard = Boolean(file?.url || file?.storagePath);
 
-          return (
-            <Stack
-              key={file.fileName}
-              sx={{ height: isPhotosForm ? { xs: 171, md: 250 } : 260 }}
-            >
-              {showCard && (
-                <>
-                  {isDocumentsForm && (
-                    <DocumentCard
-                      name={file.fileName}
-                      url={file.url}
+        return (
+          <Stack
+            key={file?.fileName}
+            sx={{ height: isPhotosForm ? { xs: 171, md: 250 } : 260 }}
+          >
+            {showCard && (
+              <>
+                {isDocumentsForm && (
+                  <DocumentCard
+                    name={file.fileName}
+                    url={file.url}
+                    onFileRemoveClick={() => onFileRemove(index)}
+                    uploadProgress={uploadProgresses[index]}
+                    isRemoving={Boolean(
+                      file.storagePath && removingFilePath === file.storagePath,
+                    )}
+                  />
+                )}
+                {isPhotosForm && (
+                  <Box
+                    sx={{
+                      width: { xs: 171, md: 261 },
+                      height: { xs: 171, md: 250 },
+                    }}
+                  >
+                    <PhotoCard
+                      src={file.url}
                       onFileRemoveClick={() => onFileRemove(index)}
                       uploadProgress={uploadProgresses[index]}
                       isRemoving={Boolean(
@@ -99,50 +114,31 @@ export default function FilesForm(props: Props) {
                           removingFilePath === file.storagePath,
                       )}
                     />
-                  )}
-                  {isPhotosForm && (
-                    <Box
-                      sx={{
-                        width: { xs: 171, md: 261 },
-                        height: { xs: 171, md: 250 },
-                      }}
-                    >
-                      <PhotoCard
-                        src={file.url}
-                        onFileRemoveClick={() => onFileRemove(index)}
-                        uploadProgress={uploadProgresses[index]}
-                        isRemoving={Boolean(
-                          file.storagePath &&
-                            removingFilePath === file.storagePath,
-                        )}
-                      />
-                    </Box>
-                  )}
-                </>
-              )}
-              {uploadErrors[index] && (
-                <FormHelperText error>{uploadErrors[index]}</FormHelperText>
-              )}
-              <Controller
-                name={`files.${index}`}
-                control={control}
-                rules={{ required: 'Please specify trip name!' }}
-                render={({ field }) => (
-                  <input
-                    ref={index === files.length - 1 ? fileInputRef : null}
-                    type="file"
-                    id="fileInput"
-                    hidden
-                    accept={acceptedFileFormats}
-                    onChange={(event) =>
-                      onFileInputChange(event, field.onChange)
-                    }
-                  />
+                  </Box>
                 )}
-              />
-            </Stack>
-          );
-        })}
+              </>
+            )}
+            {uploadErrors[index] && (
+              <FormHelperText error>{uploadErrors[index]}</FormHelperText>
+            )}
+            <Controller
+              name={`files.${index}`}
+              control={control}
+              rules={{ required: 'Please specify trip name!' }}
+              render={({ field }) => (
+                <input
+                  ref={index === files.length - 1 ? fileInputRef : null}
+                  type="file"
+                  id="fileInput"
+                  hidden
+                  accept={acceptedFileFormats}
+                  onChange={(event) => onFileInputChange(event, field.onChange)}
+                />
+              )}
+            />
+          </Stack>
+        );
+      })}
       {props.SubmitComponent}
     </Stack>
   );
