@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 
 import { ChevronRight } from '@mui/icons-material';
 import { ChevronLeft } from '@mui/icons-material';
@@ -10,6 +10,7 @@ import Drawer from '@mui/material/Drawer';
 import IconButton from '@mui/material/IconButton';
 import Toolbar from '@mui/material/Toolbar';
 
+import ErrorBoundary from '@config/routes/components/ErrorBoundary';
 import { theme } from '@config/style';
 import AppIconButton from '@features/ui/AppIconButton';
 import { useBreakpoints } from '@hooks/useBreakpoints';
@@ -57,6 +58,7 @@ const StyledDrawer = styled(Drawer, {
 const TOOLBAR_STYLES = { mt: 2, mb: 1 };
 
 export default function AccountLayout() {
+  useLocation();
   const { md, xl } = useBreakpoints();
   const [isOpen, setIsOpen] = useState(xl);
   const [isClosing, setIsClosing] = useState(false);
@@ -171,7 +173,9 @@ export default function AccountLayout() {
         }}
       >
         <Toolbar sx={{ display: { md: 'none', ...TOOLBAR_STYLES } }} />
-        <Outlet />
+        <ErrorBoundary>
+          <Outlet />
+        </ErrorBoundary>
       </Box>
     </Box>
   );
