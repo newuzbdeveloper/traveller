@@ -2,6 +2,7 @@ import { Outlet, useLocation } from 'react-router-dom';
 
 import { Box, Grid } from '@mui/material';
 
+import ErrorBoundary from '@config/routes/components/ErrorBoundary';
 import LoginFormBackground from '@features/auth/assets/login.png';
 import SignUpFormBackground from '@features/auth/assets/signup.png';
 
@@ -62,7 +63,9 @@ export default function AuthLayout() {
           <Box mb={4}>
             <Logo />
           </Box>
-          <Outlet />
+          <ErrorBoundary>
+            <Outlet />
+          </ErrorBoundary>
         </Box>
       </Grid>
     </Grid>
