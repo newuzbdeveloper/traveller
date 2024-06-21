@@ -1,11 +1,33 @@
 import { useParams } from 'react-router-dom';
 
-import { CircularProgress, Stack } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import {
+  Breadcrumbs,
+  CircularProgress,
+  Link,
+  Stack,
+  Typography,
+} from '@mui/material';
 
-import { useGetTripDetailsQuery } from '../store/tripsApi';
+import { AppRoutes } from '@config/routes';
+import { Colors } from '@config/style/Colors';
+import AppButton from '@features/ui/AppButton';
+
+import {
+  useGetTripDetailsQuery,
+  useUpdateTripMutation,
+} from '../store/tripsApi';
+import type { Trip } from '../types';
+import Hero from './Hero';
+import TripTabs from './Tabs/TripTabs';
 
 export default function TripDetails() {
+  const [updateTrip] = useUpdateTripMutation();
   const { tripId } = useParams();
+
+  const onTripUpdate = (data: Partial<Trip>) => {
+    updateTrip({ id: trip!.id, data });
+  };
 
   const {
     data: trip,
@@ -22,7 +44,33 @@ export default function TripDetails() {
       </Stack>
     );
   } else if (isSuccess) {
-    return <>{trip.name}</>;
+    return (
+      <Stack>
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          alignItems="center"
+        >
+          <Breadcrumbs aria-label="breadcrumb">
+            <Link underline="hover" color="inherit" href={AppRoutes.trips}>
+              Trips
+            </Link>
+            <Typography
+              color={Colors.secondaryBlue}
+              variant="subtitle2"
+              aria-current="page"
+            >
+              {trip.name}
+            </Typography>
+          </Breadcrumbs>
+          <AppButton endIcon={<DeleteIcon />} color="error">
+            Delete
+          </AppButton>
+        </Stack>
+        <Hero trip={trip} />
+        <TripTabs trip={trip} onTripUpdate={onTripUpdate} />
+      </Stack>
+    );
   } else if (isError) {
     throw error;
   }
