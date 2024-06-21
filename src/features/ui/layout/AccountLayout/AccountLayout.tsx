@@ -165,11 +165,11 @@ export default function AccountLayout() {
           width: '100%',
           bgcolor: 'grey.100',
           minHeight: { md: '100vh' },
-          height: { xs: '100vh', md: 'auto' },
           maxHeight: { xs: '-webkit-fill-available', md: 'auto' },
           px: { xs: 2, md: 7 },
           pt: { xs: 0, md: 4 },
           pb: 4,
+          height: 'fit-content',
         }}
       >
         <Toolbar sx={{ display: { md: 'none', ...TOOLBAR_STYLES } }} />

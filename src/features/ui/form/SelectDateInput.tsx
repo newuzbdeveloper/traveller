@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
 import { type Control, Controller } from 'react-hook-form';
 
+import type { SxProps, Theme } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers';
 
 interface Props {
@@ -11,6 +12,8 @@ interface Props {
   label: string;
   maxDate?: Date | null;
   minDate?: Date | null;
+  fullWidth?: boolean;
+  sx?: SxProps<Theme>;
 }
 
 export default function SelectedDateInput({
@@ -20,6 +23,8 @@ export default function SelectedDateInput({
   label,
   maxDate,
   minDate,
+  fullWidth,
+  sx,
 }: Props) {
   return (
     <Controller
@@ -48,7 +53,11 @@ export default function SelectedDateInput({
             }
             field.onChange(value ?? newValue);
           }}
-          sx={{ width: '100%', '& .MuiSvgIcon-root': { ml: 0.1 } }}
+          sx={{
+            width: fullWidth ? '100%' : 'auto',
+            '& .MuiSvgIcon-root': { ml: 0.1 },
+            ...sx,
+          }}
           value={field.value ? dayjs(field.value) : null}
           maxDate={maxDate ? dayjs(maxDate) : undefined}
           minDate={minDate ? dayjs(minDate) : undefined}
