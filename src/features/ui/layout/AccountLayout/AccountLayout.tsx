@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 
 import { ChevronRight } from '@mui/icons-material';
@@ -58,7 +58,7 @@ const StyledDrawer = styled(Drawer, {
 const TOOLBAR_STYLES = { mt: 2, mb: 1 };
 
 export default function AccountLayout() {
-  useLocation();
+  const location = useLocation();
   const { md, xl } = useBreakpoints();
   const [isOpen, setIsOpen] = useState(xl);
   const [isClosing, setIsClosing] = useState(false);
@@ -82,8 +82,20 @@ export default function AccountLayout() {
     setIsOpen(false);
   };
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
+
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box
+      sx={{
+        display: 'flex',
+        bgcolor: 'grey.100',
+        minHeight: { md: '100vh' },
+        height: { xs: '100vh', md: 'auto' },
+        maxHeight: { xs: '-webkit-fill-available', md: 'auto' },
+      }}
+    >
       {/* Desktop Drawer */}
       {md && (
         <>
@@ -163,10 +175,6 @@ export default function AccountLayout() {
         component="main"
         sx={{
           width: '100%',
-          bgcolor: 'grey.100',
-          minHeight: { md: '100vh' },
-          height: { xs: '100vh', md: 'auto' },
-          maxHeight: { xs: '-webkit-fill-available', md: 'auto' },
           px: { xs: 2, md: 7 },
           pt: { xs: 0, md: 4 },
           pb: 4,

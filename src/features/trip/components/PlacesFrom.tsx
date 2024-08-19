@@ -1,7 +1,9 @@
-import React from 'react';
+import { debounce } from 'lodash';
+import React, { useCallback, useEffect } from 'react';
 import {
   Controller,
   type SubmitHandler,
+  type UseFormWatch,
   useFieldArray,
   useForm,
 } from 'react-hook-form';
@@ -13,8 +15,10 @@ import { Trip } from '@features/trip/types';
 
 interface Props {
   defaultPlaces: Trip['places'];
-  onSubmit: SubmitHandler<FormInput>;
-  SubmitComponent: React.ReactNode;
+  onSubmit?: (places: Trip['places']) => void;
+  onChange?: (newPlaces: Trip['places']) => void;
+  SubmitComponent?: React.ReactNode;
+  autoFocus?: boolean;
 }
 
 interface FormInput {
@@ -22,14 +26,20 @@ interface FormInput {
 }
 
 export default function PlacesForm(props: Props) {
-  const { control, handleSubmit, places, errors, onInputKeyDown } =
-    usePlacesForm(props);
+  const {
+    control,
+    handleSubmit,
+    places,
+    errors,
+    onInputKeyDown,
+    onFormSubmit,
+  } = usePlacesForm(props);
   return (
     <>
       <Stack
         component="form"
         noValidate
-        onSubmit={handleSubmit(props.onSubmit)}
+        onSubmit={handleSubmit(onFormSubmit)}
         sx={{ width: '100%' }}
         gap={1}
       >
@@ -58,7 +68,7 @@ export default function PlacesForm(props: Props) {
                     id={`${place}.${index}`}
                     inputProps={{ 'aria-label': 'Place Name' }}
                     onKeyDown={(event) => onInputKeyDown(event, index)}
-                    autoFocus={index === places.length - 1}
+                    autoFocus={props.autoFocus && index === places.length - 1}
                     sx={{
                       textDecoration: place.isChecked ? 'line-through' : 'none',
                       width: '100%',
@@ -81,7 +91,7 @@ export default function PlacesForm(props: Props) {
   );
 }
 
-function usePlacesForm({ defaultPlaces }: Props) {
+function usePlacesForm({ defaultPlaces, onSubmit, onChange }: Props) {
   const {
     control,
     handleSubmit,
@@ -121,11 +131,38 @@ function usePlacesForm({ defaultPlaces }: Props) {
     }
   };
 
+  const onFormSubmit: SubmitHandler<FormInput> = (data) => {
+    onSubmit?.(data.places);
+  };
+
+  useWatchChange(watch, onChange);
   return {
     control,
     handleSubmit,
     places,
     errors,
     onInputKeyDown,
+    onFormSubmit,
   };
+}
+
+function useWatchChange(
+  watch: UseFormWatch<FormInput>,
+  onChange?: (data: Trip['places']) => void,
+) {
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const onUpdateDebounced = useCallback(
+    debounce((data: Trip['places']) => {
+      onChange?.(data);
+    }, 500),
+    [],
+  );
+
+  useEffect(() => {
+    const formUpdateSubscription = watch((newValues) => {
+      onUpdateDebounced(newValues.places as Trip['places']);
+    });
+
+    return () => formUpdateSubscription.unsubscribe();
+  }, [onUpdateDebounced, watch]);
 }

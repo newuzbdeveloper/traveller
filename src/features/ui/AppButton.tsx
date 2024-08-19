@@ -14,6 +14,15 @@ interface Props {
   disabled?: boolean;
   endIcon?: React.ReactNode;
   startIcon?: React.ReactNode;
+  isSmall?: boolean;
+  color?:
+    | 'error'
+    | 'inherit'
+    | 'primary'
+    | 'secondary'
+    | 'success'
+    | 'info'
+    | 'warning';
 }
 
 function AppButton({
@@ -28,6 +37,8 @@ function AppButton({
   startIcon,
   onClick,
   disabled,
+  color,
+  isSmall,
   sx,
 }: Props) {
   return (
@@ -42,12 +53,13 @@ function AppButton({
       variant={variant}
       disabled={disabled}
       fullWidth={fullWidth}
+      color={color}
       sx={{
         borderRadius: 2,
         textTransform: 'none',
         height: {
-          xs: variant === 'text' ? 48 : 56,
-          md: variant === 'text' ? 48 : 56,
+          xs: variant === 'text' || isSmall ? 48 : 56,
+          md: variant === 'text' || isSmall ? 48 : 56,
         },
         width: fullWidth ? '100%' : 'fit-content',
         ...sx,
