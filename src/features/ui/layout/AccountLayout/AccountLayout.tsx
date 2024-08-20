@@ -109,7 +109,7 @@ export default function AccountLayout() {
             aria-label="sidebar toggle button"
             isSmall
             sx={{
-              position: 'absolute',
+              position: 'fixed',
               borderRadius: 1,
               background: 'white',
               top: 27,
