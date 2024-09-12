@@ -21,6 +21,7 @@ import { useAppDispatch, useAppSelector } from '@store/index';
 import {
   nextStep,
   selectWizardTrip,
+  setPreviewImage,
   setTravelInfo,
 } from '../../store/tripWizardSlice';
 import Pagination from '../navigation/Pagination';
@@ -47,10 +48,17 @@ export default function TravelInfo() {
   } = useTravelInfoForm();
   const { isOpen, open, close } = useDialog();
 
+  const dispatch = useAppDispatch();
   const previewImageSave = (previewImage: Trip['previewImage']) => {
     close();
+    dispatch(setPreviewImage(previewImage));
     setValue('previewImage', previewImage);
     trigger('previewImage');
+  };
+
+  const onPreviewImageChange = (previewImage: Trip['previewImage']) => {
+    dispatch(setPreviewImage(previewImage));
+    setValue('previewImage', previewImage);
   };
 
   return (
@@ -177,9 +185,13 @@ export default function TravelInfo() {
         />
         <Pagination />
         <PreviewImageDialog
+          key={previewImageSrc}
           isOpen={isOpen}
           onClose={close}
           onSave={previewImageSave}
+          defaultPreviewImage={formValues.previewImage}
+          defaultPreviewImageSrc={previewImageSrc}
+          onChange={onPreviewImageChange}
         />
       </Stack>
     </>
