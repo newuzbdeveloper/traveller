@@ -2,7 +2,7 @@ import { LoadingButton } from '@mui/lab';
 import { type SxProps, type Theme } from '@mui/material';
 
 interface Props {
-  onClick: () => void;
+  onClick: (event?: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
   'aria-label': string;
   children: JSX.Element;
   isSmall?: boolean;

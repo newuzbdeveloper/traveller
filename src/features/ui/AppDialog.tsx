@@ -21,6 +21,7 @@ interface Props {
   children: React.ReactNode;
   isForm?: boolean;
   maxWidth?: number;
+  isLoading?: boolean;
 }
 
 const DESKTOP_PADDING_X = 4;
@@ -37,6 +38,7 @@ export default function AppDialog({
   children,
   isForm,
   maxWidth,
+  isLoading,
 }: Props) {
   const { md } = useBreakpoints();
   return (
@@ -101,6 +103,7 @@ export default function AppDialog({
             type={isForm ? 'submit' : 'button'}
             fullWidth
             onClick={onPrimaryButtonClick}
+            loading={isLoading}
           >
             {primaryButtonText}
           </AppButton>

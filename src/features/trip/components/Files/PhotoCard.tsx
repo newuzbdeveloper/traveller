@@ -9,6 +9,9 @@ interface Props {
   onFileRemoveClick: () => void;
   uploadProgress: number | undefined;
   isRemoving: boolean;
+  onClick?: () => void;
+  enableBorders?: boolean;
+  borderColor?: string;
 }
 
 export default function PhotoCard({
@@ -16,12 +19,18 @@ export default function PhotoCard({
   onFileRemoveClick,
   uploadProgress,
   isRemoving,
+  onClick,
+  enableBorders,
+  borderColor,
 }: Props) {
   const { md } = useBreakpoints();
   return (
     <Box
+      onClick={onClick}
       sx={{
         borderRadius: 4,
+        border: enableBorders ? 4 : 0,
+        borderColor: borderColor,
         width: '100%',
         height: '100%',
         position: 'relative',
@@ -44,7 +53,10 @@ export default function PhotoCard({
         variant="contained"
         isSmall={!md}
         aria-label="photo remove"
-        onClick={onFileRemoveClick}
+        onClick={(event) => {
+          event?.stopPropagation();
+          onFileRemoveClick();
+        }}
         sx={{
           top: 12,
           right: 12,
@@ -58,8 +70,8 @@ export default function PhotoCard({
       </AppIconButton>
       <Stack
         component={Link}
-        href={isRemoving ? '' : src ?? '#'}
-        target={isRemoving ? '_self' : '_blank'}
+        href={isRemoving || onClick ? '' : src ?? '#'}
+        target={isRemoving || onClick ? '_self' : '_blank'}
         rel="noopener noreferrer"
         sx={{
           gap: 1,
